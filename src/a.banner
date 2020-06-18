@@ -1,0 +1,20 @@
+<template>
+  <div class="container">
+  
+  </div>
+</template>
+
+<script>
+  export default {
+    data () {
+
+    }
+  }
+</script>
+
+<style lang="less">
+  .container {
+    width: 100px;
+    height: 100px;
+  }
+</style>
