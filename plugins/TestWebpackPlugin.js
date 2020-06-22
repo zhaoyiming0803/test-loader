@@ -5,7 +5,9 @@ class TestWebpackPlugin {
 
   apply (compiler) {
     compiler.hooks.run.tap('TestWebpackPlugin', compilation => {
-      console.log('run TestWebpackPlugin')
+      // true
+      // console.log(Object.keys(compiler.hooks).toString() === Object.keys(compilation.hooks).toString())
+      console.log('compilation hooks: ', Object.keys(compiler.hooks))
     })
 
     // compiler.hooks.make.tapAsync('TestWebpackPlugin', compilation => {
