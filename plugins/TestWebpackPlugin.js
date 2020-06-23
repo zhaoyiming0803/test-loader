@@ -4,10 +4,22 @@ class TestWebpackPlugin {
   constructor () {}
 
   apply (compiler) {
-    compiler.hooks.run.tap('TestWebpackPlugin', compilation => {
-      // true
-      // console.log(Object.keys(compiler.hooks).toString() === Object.keys(compilation.hooks).toString())
-      console.log('compilation hooks: ', Object.keys(compiler.hooks))
+    compiler.hooks.thisCompilation.tap('TestWebpackPlugin', compilation => {
+      console.log(Object.keys(compiler.hooks))
+      // 每种 compiler.hooks 下的 compilation 是不一样的
+      console.log(Object.keys(compilation.hooks))
+      
+      compiler.hooks.thisCompilation.tap('TestWebpackPlugin', compilation => {
+        console.log('thisCompilation')
+      })
+
+      compiler.hooks.compilation.tap('TestWebpackPlugin', compilation => {
+        console.log('compilation')
+      })
+
+      compiler.hooks.afterCompile.tap('TestWebpackPlugin', compilation => {
+        console.log('afterCompile')
+      })
     })
 
     // compiler.hooks.make.tapAsync('TestWebpackPlugin', compilation => {

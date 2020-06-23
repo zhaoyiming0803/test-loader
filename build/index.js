@@ -13,11 +13,11 @@ console.log(originalArgv)
 
 const compiler = webpack(merge({}, baseWebpackConfig))
 
-// compiler.watch({
-//   ignored: /node_modules/,
-//   aggregateTimeout: 1000
-// }, function () {
-//   console.log('watch~')
-// })
+compiler.watch({
+  ignored: /node_modules/,
+  aggregateTimeout: 1000
+}, function () {
+  console.log('watch~')
+})
 
-compiler.run()
+// compiler.run()
