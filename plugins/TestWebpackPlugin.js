@@ -56,24 +56,24 @@ class TestWebpackPlugin {
       const {normalModuleFactory} = compilationParams
 
       normalModuleFactory.hooks.parser.for('javascript/auto').tap('TestWebpackPlugin', (parser) => {
-        console.log('parser')
+        // console.log('parser')
 
         parser.hooks.evaluateTypeof.for('myIdentifier').tap('TestWebpackPlugin', expression => {
-          console.log('evaluateTypeof')
+          // console.log('evaluateTypeof')
           return 2 === 1
         })
 
         parser.hooks.rename.for('d').tap('TestWebpackPlugin', expression => {
-          console.log('--- rename ---')
+          // console.log('--- rename ---')
           return 2 === 1
         })
 
         parser.hooks.assigned.for('h').tap('TestWebpackPlugin', expression => {
-          console.log('assigned')
+          // console.log('assigned')
         })
 
         parser.hooks.call.for('require').tap('TestWebpackPlugin', expression => {
-          console.log('call: ', expression)
+          // console.log('call: ', expression)
           expression.loc.range = expression.range
         })
 
@@ -82,7 +82,7 @@ class TestWebpackPlugin {
           // console.log('parser.state.module.resource: ', parser.state.module.resource)
           if (/test-loader/.test(parser.state.module.resource)) {
             const current = parser.state.current
-            console.log('current: ', current)
+            // console.log('current: ', current)
           }
         })
       })
@@ -106,14 +106,6 @@ class TestWebpackPlugin {
       //   )
       // })
     // })
-
-    compiler.hooks.afterEmit.tapAsync('TestWebpackPlugin', (file, content) => {
-      console.log('file: ', file.assets)
-    })
-
-    compiler.hooks.done.tap('TestWebpackPlugin', stats => {
-      console.log('stats: ', stats)
-    })
   }
 }
 

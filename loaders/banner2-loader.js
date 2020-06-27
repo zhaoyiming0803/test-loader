@@ -3,11 +3,14 @@ const schemaUtils = require('schema-utils');
 
 function loader(source) {
 //  console.log('banner2-loader: ', source)
- const ret = 'banner2---' + Date.now()
+  const ret = source + Date.now()
  // console.log('issuer: ', this._module.issuer)
 //  console.log('abc: ', this._module.abc)
- this.emitFile('haha/hehe/go/hello/banner-file.banner', ret)
- this.emitFile('haha/hehe/go/hello/banner-file.haha', ret + '123')
+
+  const fileName = loaderUtils.interpolateName(this, '[hash].[ext]', {content: ret});
+  this.emitFile(fileName, ret)
+
+  return `module.exports = "${ret}"`;
 }
 
 module.exports = loader

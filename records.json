@@ -1,20 +1,4 @@
 {
-  "modules": {
-    "byIdentifier": {},
-    "usedIds": {}
-  },
-  "chunks": {
-    "byName": {},
-    "bySource": {
-      "0 src/index.js ./a": 0,
-      "0 src/index.js ./b": 1,
-      "0 src/a.js ./b": 1
-    },
-    "usedIds": [
-      0,
-      1
-    ]
-  },
   "HtmlWebpackCompiler": [
     {
       "modules": {
@@ -27,5 +11,19 @@
         "usedIds": []
       }
     }
-  ]
+  ],
+  "modules": {
+    "byIdentifier": {},
+    "usedIds": {}
+  },
+  "chunks": {
+    "byName": {},
+    "bySource": {
+      "0 src/index.js ./b": 0,
+      "0 src/a.js ./b": 0,
+      "0 src/index.js ./a": 1,
+      "0 src/index.js ./a.banner": 2
+    },
+    "usedIds": []
+  }
 }
