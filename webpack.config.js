@@ -4,6 +4,7 @@ const ShouldEmitWebpackPlugin = require('./plugins/ShouldEmitWebpackPlugin')
 const ThisCompilationWebpackPlugin = require('./plugins/ThisCompilationWebpackPlugin')
 const TestWebpackPlugin = require('./plugins/TestWebpackPlugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const CleanWebpackPlugin = require('clean-webpack-plugin').CleanWebpackPlugin
 
 module.exports = {
   mode: 'development',
@@ -23,7 +24,8 @@ module.exports = {
     new TestWebpackPlugin(),
     new HtmlWebpackPlugin({
       template: './src/index.html'
-    })
+    }),
+    new CleanWebpackPlugin()
   ],
   module: {
     rules: [

@@ -9,7 +9,7 @@ const originalArgv = JSON.parse(process.env.npm_config_argv)
   .filter(item => item.indexOf('--') === 0)
   .map(item => item.slice(2))
 
-console.log(originalArgv)
+// console.log(originalArgv)
 
 const compiler = webpack(merge({}, baseWebpackConfig))
 
