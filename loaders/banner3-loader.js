@@ -5,12 +5,14 @@ function loader(source) {
     // console.log('banner3-loader: ', source)
     this._module.abc = 123
 
-    // return 'source from banner3-loader'
+    // return 'source from banner3-loader sync'
 
-    const callback = this.async()
-    setTimeout(() => {
-        callback(null, 'source from banner3-loader')
-    }, 2000)
+    // const callback = this.async()
+    // setTimeout(() => {
+    //     callback(null, 'source from banner3-loader async')
+    // }, 2000)
+
+    this.callback(null, 'source from banner3-loader callback')
 }
 
 module.exports = loader

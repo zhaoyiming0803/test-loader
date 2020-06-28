@@ -22,7 +22,8 @@
       "0 src/index.js ./b": 0,
       "0 src/a.js ./b": 0,
       "0 src/index.js ./a": 1,
-      "0 src/index.js ./a.banner": 2
+      "0 src/index.js ./a.banner": 2,
+      "0 src/index.js ./app.vue": 0
     },
     "usedIds": []
   }

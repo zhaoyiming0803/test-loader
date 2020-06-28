@@ -5,6 +5,7 @@ const ThisCompilationWebpackPlugin = require('./plugins/ThisCompilationWebpackPl
 const TestWebpackPlugin = require('./plugins/TestWebpackPlugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CleanWebpackPlugin = require('clean-webpack-plugin').CleanWebpackPlugin
+const VueLoaderPlugin = require('vue-loader').VueLoaderPlugin
 
 module.exports = {
   mode: 'development',
@@ -25,7 +26,8 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './src/index.html'
     }),
-    new CleanWebpackPlugin()
+    new CleanWebpackPlugin(),
+    new VueLoaderPlugin()
   ],
   module: {
     rules: [
@@ -39,6 +41,16 @@ module.exports = {
           }
         }]
       },
+      {
+        test: /\.vue$/,
+        use: [{
+          loader: 'vue-loader',
+          options: {
+            author: 'sdf',
+            time: 'sdf'
+          }
+        }]
+      }
     ]
   }
 }

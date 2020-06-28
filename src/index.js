@@ -1,3 +1,6 @@
+// import App from './app.vue'
+// console.log('App: ', App)
+
 // const Person = require('./Person')
 
 // import('./a').then(res => {
