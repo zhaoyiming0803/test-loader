@@ -23,10 +23,10 @@ class AutoExternalPlugin {
       // 2、在生产模块的过程中发现如果是外部模块则返回外部模块
       normalModuleFactory.hooks.factory.tap('AutoExternalPlugin', factory => (data, callback) => {
         // console.log('dependencies: ', data.dependencies)
-        const request = data.dependencies[0].request
+        const {request, userRequest} = data.dependencies[0].request
         if (this.externalModules[request]) {
           const varName = this.options[request].expose
-          callback(null, new ExternalModule(varName, 'window'))
+          callback(null, new ExternalModule(varName, 'window', /*`import ${varName} from ${request}`*/ userRequest))
         } else {
           factory(data, callback)
         }
@@ -34,7 +34,7 @@ class AutoExternalPlugin {
     })
 
     compiler.hooks.thisCompilation.tap('AutoExternalPlugin', compilation => {
-      // 3、向 body 底部插入全局变量的脚本
+      // 3、向 body 顶部插入全局变量的脚本
       HtmlWebpackPlugin.getHooks(compilation).alterAssetTags.tapAsync('AutoExternalPlugin', (data, callback) => {
         // console.log('alterAssetTags: ', data)
         Object.keys(this.externalModules).forEach(source => {
