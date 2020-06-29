@@ -5,7 +5,8 @@ const ThisCompilationWebpackPlugin = require('./plugins/ThisCompilationWebpackPl
 const TestWebpackPlugin = require('./plugins/TestWebpackPlugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CleanWebpackPlugin = require('clean-webpack-plugin').CleanWebpackPlugin
-const VueLoaderPlugin = require('vue-loader').VueLoaderPlugin
+// const VueLoaderPlugin = require('vue-loader').VueLoaderPlugin
+const AutoExternalPlugin = require('./plugins/AutoExternalPlugin')
 
 module.exports = {
   mode: 'development',
@@ -22,12 +23,22 @@ module.exports = {
     // new WatchRunWebpackPlugin(),
     // new ShouldEmitWebpackPlugin(),
     // new ThisCompilationWebpackPlugin(),
-    new TestWebpackPlugin(),
+    // new TestWebpackPlugin(),
     new HtmlWebpackPlugin({
       template: './src/index.html'
     }),
     new CleanWebpackPlugin(),
-    new VueLoaderPlugin()
+    // new VueLoaderPlugin(),
+    new AutoExternalPlugin({
+      jquery: {
+        expose: '$',
+        url: 'https://cdn.bootcss.com/jquery/3.1.0/jquery.js'
+      },
+      vue: {
+        expose: 'Vue',
+        url: 'https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.js'
+      }
+    })
   ],
   module: {
     rules: [

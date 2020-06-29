@@ -28,5 +28,11 @@
 // const person = new Person('zhaoyiming', 18)
 // console.log('person name: ', person.name)
 
-const bannerContent = require('./a.banner')
-console.log('bannerContent: ', bannerContent)
+// const bannerContent = require('./a.banner')
+// console.log('bannerContent: ', bannerContent)
+
+import $ from 'jquery'
+console.log('$: ', $)
+
+import Vue from 'vue'
+console.log('Vue: ', Vue)
