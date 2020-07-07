@@ -23,22 +23,22 @@ module.exports = {
     // new WatchRunWebpackPlugin(),
     // new ShouldEmitWebpackPlugin(),
     // new ThisCompilationWebpackPlugin(),
-    // new TestWebpackPlugin(),
-    new HtmlWebpackPlugin({
-      template: './src/index.html'
-    }),
+    new TestWebpackPlugin(),
+    // new HtmlWebpackPlugin({
+    //   template: './src/index.html'
+    // }),
     new CleanWebpackPlugin(),
     // new VueLoaderPlugin(),
-    new AutoExternalPlugin({
-      jquery: {
-        expose: '$',
-        url: 'https://cdn.bootcss.com/jquery/3.1.0/jquery.js'
-      },
-      vue: {
-        expose: 'Vue',
-        url: 'https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.js'
-      }
-    })
+    // new AutoExternalPlugin({
+    //   jquery: {
+    //     expose: '$',
+    //     url: 'https://cdn.bootcss.com/jquery/3.1.0/jquery.js'
+    //   },
+    //   vue: {
+    //     expose: 'Vue',
+    //     url: 'https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.js'
+    //   }
+    // })
   ],
   module: {
     rules: [

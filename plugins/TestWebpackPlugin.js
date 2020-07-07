@@ -6,9 +6,75 @@ class TestWebpackPlugin {
   constructor () {}
 
   apply (compiler) {
+    // environment 和 afterEnvironment 在初始化完用户自定义的 plugins 后依次触发
+    compiler.hooks.environment.tap('TestWebpackPlugin', () => {
+      // console.log('environment')
+    })
+
+    compiler.hooks.afterEnvironment.tap('TestWebpackPlugin', () => {
+      // console.log('afterEnvironment')
+    })
+
+    // entryOption 在 entry 配置项处理（内置的EntryOptionPlugin）过之后触发
+    compiler.hooks.entryOption.tap('TestWebpackPlugin', (context, entry) => {
+      // console.log('context: ', context)
+      // console.log('entry: ', entry)
+    })
+
+    // afterPlugins 在用户自定义和内部插件都初始化完之后触发
+    compiler.hooks.afterPlugins.tap('TestWebpackPlugin', $compiler => {
+      // true
+      // console.log(compiler === $compiler)
+    })
+
+    // afterResolvers 在 options 配置项处理完之后触发
+    compiler.hooks.afterResolvers.tap('TestWebpackPlugin', $compiler => {
+      // true
+      // console.log(compiler === $compiler)
+    })
+
+    // beforeRun 和 run 在实例化完 compiler 之后，执行 run 函数的时候依次触发
+    compiler.hooks.beforeRun.tapAsync('TestWebpackPlugin', ($compiler, callback) => {
+      // true
+      // console.log(compiler === $compiler)
+      callback()
+    })
+
+    compiler.hooks.run.tapAsync('TestWebpackPlugin', ($compiler, callback) => {
+      // true
+      // console.log(compiler === $compiler)
+      callback()
+    })
+
+    // beforeCompile 和 compile 在钩子 run 执行之后依次触发
+    // 这两个钩子主要提供了 normalModuleFactory 、 contextModuleFactory 、compilationDependencies
+    compiler.hooks.beforeCompile.tapAsync('TestWebpackPlugin', ({normalModuleFactory, contextModuleFactory, compilationDependencies}, cb) => {
+      // console.log('normalModuleFactory: ', normalModuleFactory)
+      // console.log('contextModuleFactory: ', contextModuleFactory)
+      // console.log('compilationDependencies: ', compilationDependencies)
+
+      normalModuleFactory.hooks.beforeResolve.tapAsync('TestWebpackPlugin', (data, callback) => {
+        // console.log('beforeResolve data: ', data)
+        callback()
+      })
+
+      normalModuleFactory.hooks.afterResolve.tapAsync('TestWebpackPlugin', (data, callback) => {
+        // console.log('afterResolve data: ', data)
+        callback()
+      })
+
+      cb()
+    })
+
+    compiler.hooks.compile.tap('TestWebpackPlugin', ({normalModuleFactory, contextModuleFactory, compilationDependencies}) => {
+      
+    })
+
+    // beforeCompile 和 compile 之后，创建 compilation，并且依次触发钩子 thisCompilation 和 compilation
+    // 有了 compilation 之后，就可以注册 compilation 上的钩子了
     let author
 
-    compiler.hooks.thisCompilation.tap('TestWebpackPlugin', (compilation, compilationParams) => {
+    compiler.hooks.thisCompilation.tap('TestWebpackPlugin', (compilation, {normalModuleFactory, contextModuleFactory, compilationDependencies}) => {
       // console.log(Object.keys(compiler.hooks))
       // 每种 compiler.hooks 下的 compilation 是不一样的
       // console.log(Object.keys(compilation.hooks))
@@ -53,8 +119,6 @@ class TestWebpackPlugin {
         callback()
       })
 
-      const {normalModuleFactory} = compilationParams
-
       normalModuleFactory.hooks.parser.for('javascript/auto').tap('TestWebpackPlugin', (parser) => {
         // console.log('parser')
 
@@ -88,24 +152,59 @@ class TestWebpackPlugin {
       })
     })
 
-    compiler.hooks.compilation.tap('TestWebpackPlugin', (compilation, compilationParams) => {
+    compiler.hooks.compilation.tap('TestWebpackPlugin', (compilation, {normalModuleFactory, contextModuleFactory, compilationDependencies}) => {
       
     })
 
-    // compiler.hooks.make.tapAsync('TestWebpackPlugin', compilation => {
-    //   console.log('TestWebpackPlugin make tap: ', compilation)
-    // })
+    // compilation 创建完之后，开始执行 make 钩子
+    compiler.hooks.make.tapAsync('TestWebpackPlugin', (compilation, callback) => {
+      // console.log('TestWebpackPlugin make tap: ', compilation)
+      callback()
+    })
 
-    // compiler.hooks.emit.tap('TestWebpackPlugin', compilation => {
-      // console.log('TestWebpackPlugin emit tap: ', compilation.assets)
-      // Object.keys(compilation.assets).forEach(fileName => {
-      //   console.log(
-      //     'compilation.assets[fileName]._value: ', 
-      //     compilation.assets[fileName]._value ||
-      //     compilation.assets[fileName].listMap().children[0].generatedCode
-      //   )
-      // })
-    // })
+    // compilation 的 seal 钩子执行完毕之后，触发 compiler 的 afterCompile 钩子
+    compiler.hooks.afterCompile.tapAsync('TestWebpackPlugin', (compilation, callback) => {
+      callback()
+    })
+
+    // 在以上过程当中，如果有任何错误，会执行 failed 钩子
+    compiler.hooks.failed.tap('TestWebpackPlugin', error => {
+      console.log('failed error: ', error)
+    })
+
+    // 在以上过程中，如果没有错误，会继续执行以下钩子
+    compiler.hooks.shouldEmit.tap('TestWebpackPlugin', compilation => {
+      return true
+    })
+
+    // 如果 shouldEmit 钩子的回调返回 false，则不再执行下面的钩子
+    // 执行以下钩子的过程中，如果没有报错，都会执行 done（编译完成） 钩子
+
+    // compiler 的 additionalPass 钩子在 compilation 的 needAdditionalPass 钩子回调返回值为 true 时执行
+    compiler.hooks.additionalPass.tapAsync('TestWebpackPlugin', compilation => {
+
+    })
+
+    // 生成资源到 output 目录之前
+    compiler.hooks.emit.tap('TestWebpackPlugin', compilation => {
+      console.log('TestWebpackPlugin emit tap: ', compilation.assets)
+      Object.keys(compilation.assets).forEach(fileName => {
+        console.log(
+          'compilation.assets[fileName]._value: ', 
+          compilation.assets[fileName]._value ||
+          compilation.assets[fileName].listMap().children[0].generatedCode
+        )
+      })
+    })
+    
+    // 生成资源到 output 目录之后
+    compiler.hooks.afterEmit.tap('TestWebpackPlugin', compilation => {
+
+    })
+
+    compiler.hooks.assetEmitted.tap('TestWebpackPlugin', compilation => {
+      console.log('hahah')
+    })
   }
 }
 

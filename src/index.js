@@ -31,8 +31,8 @@
 // const bannerContent = require('./a.banner')
 // console.log('bannerContent: ', bannerContent)
 
-import $ from 'jquery'
-console.log('$: ', $)
+// import $ from 'jquery'
+// console.log('$: ', $)
 
-import Vue from 'vue'
-console.log('Vue: ', Vue)
+// import Vue from 'vue'
+// console.log('Vue: ', Vue)
