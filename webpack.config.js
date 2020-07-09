@@ -42,15 +42,19 @@ module.exports = {
   ],
   module: {
     rules: [
+      // {
+      //   test: /\.banner$/,
+      //   use: [{
+      //     loader: 'banner-loader',
+      //     options: {
+      //       author: 'sdf',
+      //       time: 'sdf'
+      //     }
+      //   }]
+      // },
       {
         test: /\.banner$/,
-        use: [{
-          loader: 'banner-loader',
-          options: {
-            author: 'sdf',
-            time: 'sdf'
-          }
-        }]
+        use: ['a-loader', 'b-loader', 'c-loader'] 
       },
       {
         test: /\.vue$/,

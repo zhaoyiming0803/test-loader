@@ -90,6 +90,21 @@ class TestWebpackPlugin {
         }
       }
 
+      // 在模块构建开始之前触发，可以用来修改模块
+      compilation.hooks.buildModule.tap('TestWebpackPlugin', module => {
+        // console.log('module: ', module)
+      })
+
+      // 模块构建失败时执行
+      compilation.hooks.failedModule.tap('TestWebpackPlugin', module => {
+        // console.log('module: ', module)
+      })
+
+      // 模块构建成功时执行
+      compilation.hooks.succeedModule.tap('TestWebpackPlugin', module => {
+        // console.log('module: ', module)
+      })
+
       // Called when all modules have been built without errors.
       compilation.hooks.finishModules.tap('TestWebpackPlugin', modules => {
         
@@ -97,6 +112,10 @@ class TestWebpackPlugin {
 
       compilation.hooks.optimizeModules.tap('TestWebpackPlugin', modules => {
         // console.log('modules: ', modules[1])
+      })
+
+      compilation.hooks.afterChunks.tap('TestWebpackPlugin', chunks => {
+        // console.log('chunks: ', chunks[0].entryModule._source._value)
       })
 
       compilation.hooks.optimizeChunkAssets.tapAsync('TestWebpackPlugin', (chunks, callback) => {
@@ -119,7 +138,7 @@ class TestWebpackPlugin {
         callback()
       })
 
-      normalModuleFactory.hooks.parser.for('javascript/auto').tap('TestWebpackPlugin', (parser) => {
+      normalModuleFactory.hooks.parser.for('javascript/auto').tap('TestWebpackPlugin', (parser, parserOptions) => {
         // console.log('parser')
 
         parser.hooks.evaluateTypeof.for('myIdentifier').tap('TestWebpackPlugin', expression => {
@@ -187,7 +206,8 @@ class TestWebpackPlugin {
 
     // 生成资源到 output 目录之前
     compiler.hooks.emit.tap('TestWebpackPlugin', compilation => {
-      console.log('TestWebpackPlugin emit tap: ', compilation.assets)
+      return
+      console.log('emit assets: ', compilation.assets)
       Object.keys(compilation.assets).forEach(fileName => {
         console.log(
           'compilation.assets[fileName]._value: ', 
@@ -203,7 +223,7 @@ class TestWebpackPlugin {
     })
 
     compiler.hooks.assetEmitted.tap('TestWebpackPlugin', compilation => {
-      console.log('hahah')
+      // console.log('assetEmitted')
     })
   }
 }
