@@ -53,16 +53,6 @@ class TestWebpackPlugin {
       // console.log('contextModuleFactory: ', contextModuleFactory)
       // console.log('compilationDependencies: ', compilationDependencies)
 
-      normalModuleFactory.hooks.beforeResolve.tapAsync('TestWebpackPlugin', (data, callback) => {
-        // console.log('beforeResolve data: ', data)
-        callback()
-      })
-
-      normalModuleFactory.hooks.afterResolve.tapAsync('TestWebpackPlugin', (data, callback) => {
-        // console.log('afterResolve data: ', data)
-        callback()
-      })
-
       cb()
     })
 
@@ -90,9 +80,79 @@ class TestWebpackPlugin {
         }
       }
 
+      normalModuleFactory.hooks.parser.for('javascript/auto').tap('TestWebpackPlugin', (parser, parserOptions) => {
+        // console.log('parser')
+
+        parser.hooks.evaluateTypeof.for('myIdentifier').tap('TestWebpackPlugin', expression => {
+          // console.log('evaluateTypeof')
+          return 2 === 1
+        })
+
+        parser.hooks.rename.for('d').tap('TestWebpackPlugin', expression => {
+          // console.log('--- rename ---')
+          return 2 === 1
+        })
+
+        parser.hooks.assigned.for('h').tap('TestWebpackPlugin', expression => {
+          // console.log('assigned')
+        })
+
+        parser.hooks.call.for('require').tap('TestWebpackPlugin', expression => {
+          // console.log('call: ', expression)
+          expression.loc.range = expression.range
+        })
+
+        parser.hooks.evaluate.for('CallExpression').tap('TestWebpackPlugin', expression => {
+          // console.log('--- evaluate: ', expression)
+          // console.log('parser.state.module.resource: ', parser.state.module.resource)
+          if (/test-loader/.test(parser.state.module.resource)) {
+            const current = parser.state.current
+            // console.log('current: ', current)
+          }
+        })
+      })
+
+      normalModuleFactory.hooks.beforeResolve.tapAsync('TestWebpackPlugin', (data, callback) => {
+        data.abc = 'abc'
+        callback(null, data)
+      })
+
+      // factory 内部注册的时候，在其回调中执行 resolver 钩子，所以 factory 一般在 webpack 内部使用
+      // normalModuleFactory.hooks.factory.tap('TestWebpackPlugin', () => (data, callback) => {})
+      
+      normalModuleFactory.hooks.resolver.tap('TestWebpackPlugin', () => (data, callback) => {
+        console.log('data: ', data) // 包括 abc 字段
+        // webpack 内部 call resolver 时，webpack 内部执行 afterResolve 钩子
+        // afterResolve 钩子内部执行 createModule 和 module 钩子
+      })
+    })
+
+    compiler.hooks.compilation.tap('TestWebpackPlugin', (compilation, {normalModuleFactory, contextModuleFactory, compilationDependencies}) => {
+      
+    })
+
+    // compilation 创建完之后，开始执行 make 钩子
+    compiler.hooks.make.tapAsync('TestWebpackPlugin', (compilation, callback) => {
+      // entry: SingleEntryDependency
+      compilation.hooks.addEntry.tap('TestWebpackPlugin', (entry, name) => {
+        // console.log('entry: ', entry)
+        // console.log('name: ', name)
+      })
+
+      compilation.hooks.failedEntry.tap('TestWebpackPlugin', (entry, name, err) => {
+
+      })
+
+      compilation.hooks.succeedEntry.tap('TestWebpackPlugin', (entry, name, module) => {
+        
+      })
+
+      // 下面会执行 normalModuleFactory 的一些钩子，比如 beforeResolve factory afterResovle 等
+      // ......
+
       // 在模块构建开始之前触发，可以用来修改模块
       compilation.hooks.buildModule.tap('TestWebpackPlugin', module => {
-        // console.log('module: ', module)
+        // console.log('buildModule: ', module)
       })
 
       // 模块构建失败时执行
@@ -138,46 +198,6 @@ class TestWebpackPlugin {
         callback()
       })
 
-      normalModuleFactory.hooks.parser.for('javascript/auto').tap('TestWebpackPlugin', (parser, parserOptions) => {
-        // console.log('parser')
-
-        parser.hooks.evaluateTypeof.for('myIdentifier').tap('TestWebpackPlugin', expression => {
-          // console.log('evaluateTypeof')
-          return 2 === 1
-        })
-
-        parser.hooks.rename.for('d').tap('TestWebpackPlugin', expression => {
-          // console.log('--- rename ---')
-          return 2 === 1
-        })
-
-        parser.hooks.assigned.for('h').tap('TestWebpackPlugin', expression => {
-          // console.log('assigned')
-        })
-
-        parser.hooks.call.for('require').tap('TestWebpackPlugin', expression => {
-          // console.log('call: ', expression)
-          expression.loc.range = expression.range
-        })
-
-        parser.hooks.evaluate.for('CallExpression').tap('TestWebpackPlugin', expression => {
-          // console.log('--- evaluate: ', expression)
-          // console.log('parser.state.module.resource: ', parser.state.module.resource)
-          if (/test-loader/.test(parser.state.module.resource)) {
-            const current = parser.state.current
-            // console.log('current: ', current)
-          }
-        })
-      })
-    })
-
-    compiler.hooks.compilation.tap('TestWebpackPlugin', (compilation, {normalModuleFactory, contextModuleFactory, compilationDependencies}) => {
-      
-    })
-
-    // compilation 创建完之后，开始执行 make 钩子
-    compiler.hooks.make.tapAsync('TestWebpackPlugin', (compilation, callback) => {
-      // console.log('TestWebpackPlugin make tap: ', compilation)
       callback()
     })
 
@@ -188,7 +208,7 @@ class TestWebpackPlugin {
 
     // 在以上过程当中，如果有任何错误，会执行 failed 钩子
     compiler.hooks.failed.tap('TestWebpackPlugin', error => {
-      console.log('failed error: ', error)
+      // console.log('failed error: ', error)
     })
 
     // 在以上过程中，如果没有错误，会继续执行以下钩子
