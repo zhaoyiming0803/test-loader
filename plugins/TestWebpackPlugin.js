@@ -121,7 +121,7 @@ class TestWebpackPlugin {
       // normalModuleFactory.hooks.factory.tap('TestWebpackPlugin', () => (data, callback) => {})
       
       normalModuleFactory.hooks.resolver.tap('TestWebpackPlugin', () => (data, callback) => {
-        console.log('data: ', data) // 包括 abc 字段
+        // console.log('data: ', data) // 包括 abc 字段
         // webpack 内部 call resolver 时，webpack 内部执行 afterResolve 钩子
         // afterResolve 钩子内部执行 createModule 和 module 钩子
       })
