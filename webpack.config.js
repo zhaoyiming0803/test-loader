@@ -24,9 +24,9 @@ module.exports = {
     // new ShouldEmitWebpackPlugin(),
     // new ThisCompilationWebpackPlugin(),
     new TestWebpackPlugin(),
-    // new HtmlWebpackPlugin({
-    //   template: './src/index.html'
-    // }),
+    new HtmlWebpackPlugin({
+      template: './src/index.html'
+    }),
     new CleanWebpackPlugin(),
     // new VueLoaderPlugin(),
     // new AutoExternalPlugin({

@@ -4,7 +4,7 @@ const schemaUtils = require('schema-utils');
 function loader(source) {
   console.log('loader a normal: ', source)
   // return `module.exports = "this is loader a normal"`
-  return source
+  return `global.__loader = "normalLoaderA"\n ${source}`
 }
 
 // loader.pitch = function pitch (remainingRequest, previousRequest, data) {
