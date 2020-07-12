@@ -9,6 +9,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin').CleanWebpackPlugin
 const AutoExternalPlugin = require('./plugins/AutoExternalPlugin')
 
 module.exports = {
+  devtool: 'none',
   mode: 'development',
   entry: path.resolve(__dirname, 'src/index.js'),
   output: {
