@@ -20,4 +20,10 @@ const compiler = webpack(merge({}, baseWebpackConfig))
 //   console.log('watch~')
 // })
 
-compiler.run()
+compiler.run(function (err, stats) {
+  if (!err) {
+    console.log('stats: ', stats)
+  } else {
+    console.log('err: ', err)
+  }
+})
