@@ -1,0 +1,1 @@
+当前 main.js 可在 node.js 环境中直接运行

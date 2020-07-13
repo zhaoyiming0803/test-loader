@@ -18,7 +18,11 @@
   },
   "chunks": {
     "byName": {},
-    "bySource": {},
-    "usedIds": []
+    "bySource": {
+      "0 src/a.js ./b": 0
+    },
+    "usedIds": [
+      0
+    ]
   }
 }

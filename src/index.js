@@ -1,2 +1,2 @@
-const bannerContent = require('./a.banner')
-console.log('bannerContent: ', bannerContent)
+const a = require('./a')
+console.log('a: ', a)
