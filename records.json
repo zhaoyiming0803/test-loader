@@ -19,10 +19,15 @@
   "chunks": {
     "byName": {},
     "bySource": {
-      "0 src/a.js ./b": 0
+      "0 src/a.js ./b": 0,
+      "0 src/a.js ./c": 2,
+      "0 src/b.js ./c": 2,
+      "0 src/index.js ./b": 1,
+      "0 src/index.js ./c": 3
     },
     "usedIds": [
-      0
+      1,
+      2
     ]
   }
 }

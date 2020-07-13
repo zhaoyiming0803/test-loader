@@ -1,7 +1,5 @@
-console.log('a.js hahahehe')
-
-import('./b').then(res => {
-  console.log('b: ', res)
+import('./c').then(res => {
+  console.log('c in a: ', res)
 })
 
-module.exports = '1234567890'
+module.exports = 'this is a .js'

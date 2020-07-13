@@ -12,7 +12,7 @@
 		for(;i < chunkIds.length; i++) {
 			chunkId = chunkIds[i];
 			if(Object.prototype.hasOwnProperty.call(installedChunks, chunkId) && installedChunks[chunkId]) {
-				resolves.push(installedChunks[chunkId][0]);
+				resolves.push(installedChunks[chunkId][0]/**resolve */);
 			}
 			installedChunks[chunkId] = 0;
 		}
@@ -26,7 +26,7 @@
     }
 
 		while(resolves.length) {
-			resolves.shift()();
+			resolves.shift()('hello');
 		}
 	};
 
@@ -206,10 +206,23 @@
 ({
 
   "./src/a.js": (function(module, exports, __webpack_require__) {
-    console.log('a.js hahahehe')
-    __webpack_require__.e(0).then(__webpack_require__.t.bind(null, "./src/b.js", 7)).then(res => {
-      console.log('b: ', res)
-    })
+		console.log('a.js hahahehe')
+		
+		// 修改后的测试代码
+    __webpack_require__.e(0).then(function (__res) {
+			console.log('__res: ', __res)
+			return __webpack_require__.t( "./src/b.js", 7)
+		}).then(res => {
+			console.log('b: ', res)
+			
+			var bb = __webpack_require__('./src/bb.js')
+			console.log('bb: ', bb)
+		})
+		
+		// 原先的代码
+		// __webpack_require__.e(0).then(__webpack_require__.t.bind(null, "./src/b.js", 7)).then(res => {
+    //   console.log('b: ', res)
+		// })
     module.exports = '1234567890'
   }),
 
