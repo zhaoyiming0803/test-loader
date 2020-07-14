@@ -46,6 +46,14 @@ class TestWebpackPlugin {
       callback()
     })
 
+    compiler.hooks.normalModuleFactory.tap('TestWebpackPlugin', normalModuleFactory => {
+      console.log('compiler.hooks.normalModuleFactory: ')
+    })
+
+    compiler.hooks.contextModuleFactory.tap('TestWebpackPlugin', contextModuleFactory => {
+      console.log('compiler.hooks.contextModuleFactory: ')
+    })
+
     // beforeCompile 和 compile 在钩子 run 执行之后依次触发
     // 这两个钩子主要提供了 normalModuleFactory 、 contextModuleFactory 、compilationDependencies
     compiler.hooks.beforeCompile.tapAsync('TestWebpackPlugin', ({normalModuleFactory, contextModuleFactory, compilationDependencies}, cb) => {
