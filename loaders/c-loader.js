@@ -13,8 +13,8 @@ function loader(source) {
   const callback = this.async()
   async.series([
     (callback) => {
-      const name = 'class/Person'
-      const dep = SingleEntryPlugin.createDependency(this._compiler.context + '/src/Person.js', name)
+      const name = 'class/b'
+      const dep = SingleEntryPlugin.createDependency(this._compiler.context + '/src/b.banner', name)
       entryDeps.add(dep)
       this._compilation.addEntry(this._compiler.context, dep, name, (err, module) => {
         entryDeps.delete(dep)
@@ -22,7 +22,8 @@ function loader(source) {
       })
     }
   ], () => {
-    callback(null, `module.exports = "this is c loader content!!!"`)
+    // callback(null, `module.exports = "this is c loader content!!!"`)
+    callback(null, source)
   })
 }
 
