@@ -1,0 +1,11 @@
+class Person {
+  constructor (name, age) {
+    this.name = name
+    this.age = age
+  }
+}
+
+const p = new Person('zhangsan', 19)
+
+// export default p
+module.exports = p
