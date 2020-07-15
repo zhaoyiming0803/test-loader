@@ -24,7 +24,7 @@ function bannerLoader (source) {
 
    const callback = this.async()
 
-   const content = `module.exports = require("!!../loaders/banner2-loader?type=json&index=1!../loaders/banner3-loader?a=1&b=2!${resourcePath}");`
+   const content = `module.exports = require("!!babel-loader!../loaders/banner2-loader?type=json&index=1!../loaders/banner3-loader?a=1&b=2!${resourcePath}");`
    callback(null, content)
 }
 

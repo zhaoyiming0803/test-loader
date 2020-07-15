@@ -25,9 +25,6 @@
       "0 src/index.js ./b": 1,
       "0 src/index.js ./c": 3
     },
-    "usedIds": [
-      1,
-      2
-    ]
+    "usedIds": []
   }
 }

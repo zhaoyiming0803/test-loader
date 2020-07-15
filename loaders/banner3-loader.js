@@ -12,7 +12,8 @@ function loader(source) {
     //     callback(null, 'source from banner3-loader async')
     // }, 2000)
 
-    this.callback(null, 'source from banner3-loader callback')
+    // this.callback(null, 'source from banner3-loader callback')
+    this.callback(null, source)
 }
 
 module.exports = loader

@@ -8,9 +8,10 @@ function loader(source) {
 //  console.log('abc: ', this._module.abc)
 
   const fileName = loaderUtils.interpolateName(this, '[hash].[ext]', {content: ret});
-  this.emitFile(fileName, ret)
+  // this.emitFile(fileName, ret)
 
-  return `module.exports = "${ret}"`;
+  // return `module.exports = "${ret}"`;
+  return source
 }
 
 module.exports = loader

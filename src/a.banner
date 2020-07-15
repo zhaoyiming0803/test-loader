@@ -1,1 +1,11 @@
-module.exports = "this is a.banner"
+class Person {
+  constructor (name, age) {
+    this.name = name
+    this.age = age
+  }
+}
+
+const p = new Person('zhaoyiming', 18)
+
+// export default p
+module.exports = p

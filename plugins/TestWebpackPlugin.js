@@ -46,12 +46,14 @@ class TestWebpackPlugin {
       callback()
     })
 
+    // 在 normalModuleFactory 和 contextModuleFactory 钩子执行的过程中创建了 normalModuleFactory 和 contextModuleFactory 对象
+    // 这两钩子的回调参数与 beforeCompile 、 compile 、thisCompilation 、compilation 钩子回调中的对应的对象是相同的
     compiler.hooks.normalModuleFactory.tap('TestWebpackPlugin', normalModuleFactory => {
-      console.log('compiler.hooks.normalModuleFactory: ')
+      // console.log('compiler.hooks.normalModuleFactory: ')
     })
 
     compiler.hooks.contextModuleFactory.tap('TestWebpackPlugin', contextModuleFactory => {
-      console.log('compiler.hooks.contextModuleFactory: ')
+      // console.log('compiler.hooks.contextModuleFactory: ')
     })
 
     // beforeCompile 和 compile 在钩子 run 执行之后依次触发
@@ -194,9 +196,24 @@ class TestWebpackPlugin {
       })
 
       compilation.hooks.additionalAssets.tapAsync('TestWebpackPlugin', callback => {
-        const source = new ConcatSource()
-        source.add('create at ' + Date.now())
-        compilation.assets['webpack-version.txt'] = source
+        const additionalAssets = [
+          {
+            name: 'webpack-version.txt',
+            content: 'create at ' + Date.now()
+          },
+          {
+            name: 'class/Person.json',
+            content: JSON.stringify({
+              a: 100,
+              b: 200
+            }, null, 4)
+          }
+        ]
+        additionalAssets.forEach(item => {
+          const source = new ConcatSource()
+          source.add(item.content)
+          compilation.assets[item.name] = source
+        })
         callback()
       })
 
