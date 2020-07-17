@@ -1,11 +1,20 @@
 const { compilation } = require("webpack");
 const { parse } = require("commander");
 const ConcatSource = require('webpack-sources').ConcatSource
+const BeforeResolvePlugin = require('./BeforeResolvePlugin')
 
 class TestWebpackPlugin {
   constructor () {}
 
   apply (compiler) {
+    const beforeResolvePlugin = new BeforeResolvePlugin('before-resolve', 'resolve', 'web')
+
+    if (Array.isArray(compiler.options.resolve.plugins)) {
+      compiler.options.resolve.plugins.push(beforeResolvePlugin)
+    } else {
+      compiler.options.resolve.plugins = [beforeResolvePlugin]
+    }
+
     // environment 和 afterEnvironment 在初始化完用户自定义的 plugins 后依次触发
     compiler.hooks.environment.tap('TestWebpackPlugin', () => {
       // console.log('environment')
