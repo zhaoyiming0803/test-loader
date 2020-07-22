@@ -1,5 +1,5 @@
-const d = require('./d')
-console.log('d: ', d)
+// const d = require('./d')
+// console.log('d: ', d)
 
 // import('./b').then(res => {
 //   console.log('b: ', res)
@@ -8,7 +8,7 @@ console.log('d: ', d)
 // import banner from './a.banner'
 // console.log(banner)
 
-// const banner = require('./a.banner')
-// console.log(banner)
+const banner = require('./a.banner')
+console.log(banner)
 
 module.exports = 123

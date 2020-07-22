@@ -20,8 +20,10 @@ function loader(source) {
         entryDeps.delete(dep)
         callback(err, module)
       })
-    }
-  ], () => {
+    }, (callback) => {
+      this.resolve(this.context, './a.banner', callback)
+    }], (err, res) => {
+      // console.log('resolved file obj: ', res)
     // callback(null, `module.exports = "this is c loader content!!!"`)
     callback(null, source)
   })
