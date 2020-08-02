@@ -1,5 +1,5 @@
-const { compilation } = require("webpack");
-const { parse } = require("commander");
+const { compilation } = require("webpack")
+const { parse } = require("commander")
 const ConcatSource = require('webpack-sources').ConcatSource
 const BeforeResolvePlugin = require('./BeforeResolvePlugin')
 const DefinePlugin = require('webpack/lib/DefinePlugin')
@@ -310,6 +310,27 @@ class TestWebpackPlugin {
 
     // 生成资源到 output 目录之前
     compiler.hooks.emit.tap('TestWebpackPlugin', compilation => {
+      let content = '文件名 | 文件大小(K)\r\n -|-| \r\n'
+      const { assets } = compilation
+      const keys = Object.keys(assets)
+      const filename = 'stats.md'
+
+      keys.forEach(key => {
+        const size = assets[key].size() / 1000 + 'K'
+        content += `${key} | ${size} \r\n`
+      })
+
+      assets[filename] = {
+        source () {
+          return content
+        },
+        size () {
+          return content.length
+        }
+      }
+
+      const size = assets[filename].size() / 1000 + 'K'
+      content += `${filename} | ${size} \r\n`
       return
       Object.keys(compilation.assets).forEach(fileName => {
         console.log(
@@ -327,30 +348,6 @@ class TestWebpackPlugin {
 
     compiler.hooks.assetEmitted.tap('TestWebpackPlugin', compilation => {
       // console.log('assetEmitted')
-    })
-
-    compiler.hooks.emit.tap('TestWebpackPlugin', (compilation) => {
-      let content = '文件名 | 文件大小(K)\r\n -|-| \r\n';
-      const { assets } = compilation;
-      const keys = Object.keys(assets);
-      const filename = 'stats.md';
-
-      keys.forEach(key => {
-        const size = assets[key].size() / 1000 + 'K';
-        content += `${key} | ${size} \r\n`;
-      });
-
-      assets[filename] = {
-        source () {
-          return content;
-        },
-        size () {
-          return content.length;
-        }
-      };
-
-      const size = assets[filename].size() / 1000 + 'K';
-      content += `${filename} | ${size} \r\n`;
     })
   }
 }
