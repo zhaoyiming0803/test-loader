@@ -2,6 +2,8 @@ const { compilation } = require("webpack");
 const { parse } = require("commander");
 const ConcatSource = require('webpack-sources').ConcatSource
 const BeforeResolvePlugin = require('./BeforeResolvePlugin')
+const DefinePlugin = require('webpack/lib/DefinePlugin')
+const fs = require('fs')
 
 class TestWebpackPlugin {
   constructor () {}
@@ -14,6 +16,10 @@ class TestWebpackPlugin {
     // } else {
     //   compiler.options.resolve.plugins = [beforeResolvePlugin]
     // }
+
+    new DefinePlugin({
+      'process.env.customEnv': JSON.stringify('this is customEnv')
+    }).apply(compiler)
 
     // environment 和 afterEnvironment 在初始化完用户自定义的 plugins 后依次触发
     compiler.hooks.environment.tap('TestWebpackPlugin', () => {
@@ -84,6 +90,7 @@ class TestWebpackPlugin {
     let author
 
     compiler.hooks.thisCompilation.tap('TestWebpackPlugin', (compilation, {normalModuleFactory, contextModuleFactory, compilationDependencies}) => {
+      // console.log('compilation modules in thisCompilation', compilation.modules.length) // 0 
       // console.log(Object.keys(compiler.hooks))
       // 每种 compiler.hooks 下的 compilation 是不一样的
       // console.log(Object.keys(compilation.hooks))
@@ -136,6 +143,10 @@ class TestWebpackPlugin {
         callback(null, data)
       })
 
+      normalModuleFactory.hooks.afterResolve.tapAsync('TestWebpackPlugin', (data, callback) => {
+        callback(null, data)
+      })
+
       // factory 内部注册的时候，在其回调中执行 resolver 钩子，所以 factory 一般在 webpack 内部使用
       // normalModuleFactory.hooks.factory.tap('TestWebpackPlugin', () => (data, callback) => {})
     })
@@ -184,6 +195,7 @@ class TestWebpackPlugin {
       // Called when all modules have been built without errors.
       compilation.hooks.finishModules.tap('TestWebpackPlugin', modules => {
         // console.log('modules: ', modules === compilation.modules) // true
+        // console.log('modules: ', modules)
         return
         modules.forEach(module => {
           console.log('module: ', module._source._name, module._source._value)
@@ -265,6 +277,11 @@ class TestWebpackPlugin {
         callback()
       })
 
+      // seal 钩子中，我们可以拿到所有解析完成的 module
+      compilation.hooks.seal.tap('TestWebpackPlugin', () => {
+        // console.log('compilation modules in seal: ', compilation.modules)
+      })
+
       callback()
     })
 
@@ -310,6 +327,30 @@ class TestWebpackPlugin {
 
     compiler.hooks.assetEmitted.tap('TestWebpackPlugin', compilation => {
       // console.log('assetEmitted')
+    })
+
+    compiler.hooks.emit.tap('TestWebpackPlugin', (compilation) => {
+      let content = '文件名 | 文件大小(K)\r\n -|-| \r\n';
+      const { assets } = compilation;
+      const keys = Object.keys(assets);
+      const filename = 'stats.md';
+
+      keys.forEach(key => {
+        const size = assets[key].size() / 1000 + 'K';
+        content += `${key} | ${size} \r\n`;
+      });
+
+      assets[filename] = {
+        source () {
+          return content;
+        },
+        size () {
+          return content.length;
+        }
+      };
+
+      const size = assets[filename].size() / 1000 + 'K';
+      content += `${filename} | ${size} \r\n`;
     })
   }
 }

@@ -11,4 +11,4 @@
 const banner = require('./a.banner')
 console.log(banner)
 
-module.exports = 123
+module.exports = process.env.customEnv

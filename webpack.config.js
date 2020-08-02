@@ -14,7 +14,7 @@ module.exports = {
   entry: path.resolve(__dirname, 'src/index.js'),
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: '[name].[hash:8].js'
+    filename: '[name].[hash:16].js'
   },
   resolveLoader: {
     modules: ['node_modules', path.resolve(__dirname, 'loaders')]
