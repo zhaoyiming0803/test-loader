@@ -9,11 +9,11 @@ class TestWebpackPlugin {
   apply (compiler) {
     const beforeResolvePlugin = new BeforeResolvePlugin('before-resolve', 'resolve', 'web')
 
-    if (Array.isArray(compiler.options.resolve.plugins)) {
-      compiler.options.resolve.plugins.push(beforeResolvePlugin)
-    } else {
-      compiler.options.resolve.plugins = [beforeResolvePlugin]
-    }
+    // if (Array.isArray(compiler.options.resolve.plugins)) {
+    //   compiler.options.resolve.plugins.push(beforeResolvePlugin)
+    // } else {
+    //   compiler.options.resolve.plugins = [beforeResolvePlugin]
+    // }
 
     // environment 和 afterEnvironment 在初始化完用户自定义的 plugins 后依次触发
     compiler.hooks.environment.tap('TestWebpackPlugin', () => {
@@ -100,7 +100,7 @@ class TestWebpackPlugin {
       }
 
       normalModuleFactory.hooks.parser.for('javascript/auto').tap('TestWebpackPlugin', (parser, parserOptions) => {
-        // console.log('parser')
+        // console.log('parserOptions: ', parserOptions)
 
         parser.hooks.evaluateTypeof.for('myIdentifier').tap('TestWebpackPlugin', expression => {
           // console.log('evaluateTypeof')
@@ -118,7 +118,7 @@ class TestWebpackPlugin {
 
         parser.hooks.call.for('require').tap('TestWebpackPlugin', expression => {
           // console.log('call: ', expression)
-          expression.loc.range = expression.range
+          // expression.loc.range = expression.range
         })
 
         parser.hooks.evaluate.for('CallExpression').tap('TestWebpackPlugin', expression => {
@@ -175,20 +175,36 @@ class TestWebpackPlugin {
 
       // 模块构建成功时执行
       compilation.hooks.succeedModule.tap('TestWebpackPlugin', module => {
+        // module.variables
+        // module.dependencies
+        // module.blocks
         // console.log('module: ', module)
       })
 
       // Called when all modules have been built without errors.
       compilation.hooks.finishModules.tap('TestWebpackPlugin', modules => {
-        
+        // console.log('modules: ', modules === compilation.modules) // true
+        return
+        modules.forEach(module => {
+          console.log('module: ', module._source._name, module._source._value)
+        })
       })
 
       compilation.hooks.optimizeModules.tap('TestWebpackPlugin', modules => {
-        // console.log('modules: ', modules[1])
+        // console.log('modules: ', modules[0].resource)
       })
 
       compilation.hooks.afterChunks.tap('TestWebpackPlugin', chunks => {
         // console.log('chunks: ', chunks[0].entryModule._source._value)
+        chunks.forEach(chunk => {
+          chunk._modules.forEach(module => {
+            return
+            console.log('module: ', module)
+            if (!chunk.hasRuntime()) {
+              chunk.removeModule(module)
+            }
+          })
+        })
       })
 
       compilation.hooks.optimizeChunkAssets.tapAsync('TestWebpackPlugin', (chunks, callback) => {
@@ -215,7 +231,30 @@ class TestWebpackPlugin {
             content: JSON.stringify({
               a: 100,
               b: 200
-            }, null, 4)
+            }, null, 2)
+          },
+          {
+            name: 'pages/index/index.wxml',
+            content: `
+              <view>{{a + b}}</view>
+            `
+          },
+          {
+            name: 'pages/index/index.js',
+            content: `
+              Page({
+                data: {
+                  a: 1,
+                  b: 2
+                },
+                onLoad () {
+
+                },
+                onShow () {
+                  
+                }
+              })
+            `
           }
         ]
         additionalAssets.forEach(item => {
@@ -255,7 +294,6 @@ class TestWebpackPlugin {
     // 生成资源到 output 目录之前
     compiler.hooks.emit.tap('TestWebpackPlugin', compilation => {
       return
-      console.log('emit assets: ', compilation.assets)
       Object.keys(compilation.assets).forEach(fileName => {
         console.log(
           'compilation.assets[fileName]._value: ', 

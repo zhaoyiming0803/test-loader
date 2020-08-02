@@ -6,9 +6,29 @@ const SingleEntryPlugin = require('webpack/lib/SingleEntryPlugin')
 const entryDeps = new Set()
 
 function loader(source) {
-  console.log('loader c normal: ', source)
+  // console.log('loader c normal: ', source)
   // return source
   // return `module.exports = "this is c loader content"`
+
+  const mainCompilation = this._compilation
+  const outputOptions = {
+    filename: '__child-[name]',
+    publicPath: mainCompilation.outputOptions.publicPath
+  }
+  const compilerName = this.resource
+
+  const childCompiler = mainCompilation.createChildCompiler('CLoaderCompiler', outputOptions, [
+    new SingleEntryPlugin(mainCompilation.compiler.context, './src/extract-file.js', 'a/b/extract-file.js')
+  ])
+  childCompiler.context = mainCompilation.compiler.context
+
+  childCompiler.hooks.thisCompilation.tap('TestWebpackPlugin', (compilation) => {
+    
+  })
+
+  childCompiler.runAsChild((err, entries, childCompilation) => {
+    // console.log('assets: ', childCompilation.errors)
+  })
 
   const callback = this.async()
   async.series([

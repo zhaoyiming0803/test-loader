@@ -9,7 +9,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin').CleanWebpackPlugin
 const AutoExternalPlugin = require('./plugins/AutoExternalPlugin')
 
 module.exports = {
-  devtool: 'none',
+  devtool: 'none', // 编译后的代码不使用 eval，可直接在 node 模式下运行
   mode: 'development',
   entry: path.resolve(__dirname, 'src/index.js'),
   output: {
