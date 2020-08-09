@@ -37,5 +37,7 @@
     "webpack-sources": "^1.4.3",
     "zepto": "^1.2.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "jQuery": "^1.7.4"
+  }
 }

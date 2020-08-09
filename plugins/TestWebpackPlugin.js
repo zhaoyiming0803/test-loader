@@ -4,6 +4,8 @@ const ConcatSource = require('webpack-sources').ConcatSource
 const BeforeResolvePlugin = require('./BeforeResolvePlugin')
 const DefinePlugin = require('webpack/lib/DefinePlugin')
 const fs = require('fs')
+const InjectDependency = require('../dependencies/InjectDependency')
+const ConstDependency = require('webpack/lib/dependencies/ConstDependency')
 
 class TestWebpackPlugin {
   constructor () {}
@@ -11,14 +13,15 @@ class TestWebpackPlugin {
   apply (compiler) {
     const beforeResolvePlugin = new BeforeResolvePlugin('before-resolve', 'resolve', 'web')
 
-    // if (Array.isArray(compiler.options.resolve.plugins)) {
-    //   compiler.options.resolve.plugins.push(beforeResolvePlugin)
-    // } else {
-    //   compiler.options.resolve.plugins = [beforeResolvePlugin]
-    // }
+    if (Array.isArray(compiler.options.resolve.plugins)) {
+      compiler.options.resolve.plugins.push(beforeResolvePlugin)
+    } else {
+      compiler.options.resolve.plugins = [beforeResolvePlugin]
+    }
 
     new DefinePlugin({
-      'process.env.customEnv': JSON.stringify('this is customEnv')
+      'process.env.customEnv': JSON.stringify('this is customEnv'),
+      'a1b2c3': JSON.stringify('c3b2a1')
     }).apply(compiler)
 
     // environment 和 afterEnvironment 在初始化完用户自定义的 plugins 后依次触发
@@ -65,6 +68,11 @@ class TestWebpackPlugin {
     // 这两钩子的回调参数与 beforeCompile 、 compile 、thisCompilation 、compilation 钩子回调中的对应的对象是相同的
     compiler.hooks.normalModuleFactory.tap('TestWebpackPlugin', normalModuleFactory => {
       // console.log('compiler.hooks.normalModuleFactory: ')
+      normalModuleFactory.hooks.parser.for('javascript/auto').tap('TestWebpackPlugin', (parser, options) => {
+        // parser.hooks.new.for('MyClass').tap('MyPlugin', expression => {
+        //   console.log('new class: ', expression)
+        // })
+      })
     })
 
     compiler.hooks.contextModuleFactory.tap('TestWebpackPlugin', contextModuleFactory => {
@@ -98,6 +106,8 @@ class TestWebpackPlugin {
       // compilation.errors.push('error0', 'error1')
       // compilation.warnings.push('warning0', 'warning1')
 
+      compilation.dependencyTemplates.set(InjectDependency, new InjectDependency.Template())
+
       if (!compilation.__author__) {
         author = compilation.__author__ = {
           name: 'zhaoyiming',
@@ -129,12 +139,33 @@ class TestWebpackPlugin {
         })
 
         parser.hooks.evaluate.for('CallExpression').tap('TestWebpackPlugin', expression => {
-          // console.log('--- evaluate: ', expression)
+          // console.log('--- evaluate: ', expression.callee.name)
           // console.log('parser.state.module.resource: ', parser.state.module.resource)
           if (/test-loader/.test(parser.state.module.resource)) {
             const current = parser.state.current
             // console.log('current: ', current)
           }
+        })
+
+        // parser.hooks.evaluateCallExpressionMember.for('showToast').tap('TestWebpackPlugin', expression => {
+        //   console.log('evaluateCallExpressionMember: ', expression)
+        // })
+
+        parser.hooks.callAnyMember.for('imported var').tap('TestWebpackPlugin', expression => {
+          // console.log('callAnyMember imported var: ', expression)
+          const args = expression.arguments
+          const name = expression.callee.object.name
+          if (name !== 'myObj') {
+            return
+          }
+          const str = 'hello Dependency template'
+          const dep = new InjectDependency({
+            content: args.length
+              ? `, ${JSON.stringify(str)}`
+              : JSON.stringify(str),
+            index: expression.end - 1
+          })
+          parser.state.current.addDependency(dep)
         })
       })
 

@@ -3,9 +3,13 @@ class Person {
     this.name = name
     this.age = age
   }
+  show () {
+    return this.name
+  }
 }
 
 const p = new Person('zhaoyiming', 18)
+p.show()
 
 // export default p
 module.exports = p
