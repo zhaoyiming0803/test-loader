@@ -76,8 +76,15 @@ class TestWebpackPlugin {
     })
 
     compiler.hooks.contextModuleFactory.tap('TestWebpackPlugin', contextModuleFactory => {
-      // console.log('compiler.hooks.contextModuleFactory: ')
+      // console.log('compiler.hooks.contextModuleFactory: ', contextModuleFactory)
     })
+
+    compiler.resolverFactory.hooks.resolver.for('resolver').tap('TestWebpackPlugin', resolver => {
+      console.log('resolver: ', resolver)
+      // resolver.hooks.resolve.tapAsync('MyPlugin', params => {
+      //   console.log('params: ', params)
+      // });
+    });
 
     // beforeCompile 和 compile 在钩子 run 执行之后依次触发
     // 这两个钩子主要提供了 normalModuleFactory 、 contextModuleFactory 、compilationDependencies
@@ -341,6 +348,7 @@ class TestWebpackPlugin {
 
     // 生成资源到 output 目录之前
     compiler.hooks.emit.tap('TestWebpackPlugin', compilation => {
+      // console.log(compilation.getAssets())
       let content = '文件名 | 文件大小(K)\r\n -|-| \r\n'
       const { assets } = compilation
       const keys = Object.keys(assets)
@@ -374,7 +382,7 @@ class TestWebpackPlugin {
     
     // 生成资源到 output 目录之后
     compiler.hooks.afterEmit.tap('TestWebpackPlugin', compilation => {
-
+      // console.log('afterEmit')
     })
 
     compiler.hooks.assetEmitted.tap('TestWebpackPlugin', compilation => {

@@ -16,8 +16,8 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].[hash:16].js',
-    libraryTarget: 'window',
-    library: 'myLibrary' // library 的使用取决于 libraryTarget 的取值
+    // libraryTarget: 'window',
+    // library: 'myLibrary' // library 的使用取决于 libraryTarget 的取值
   },
   resolveLoader: {
     modules: ['node_modules', path.resolve(__dirname, 'loaders')]
