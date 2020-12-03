@@ -1,23 +1,24 @@
 const { compilation } = require("webpack")
 const { parse } = require("commander")
 const ConcatSource = require('webpack-sources').ConcatSource
-const BeforeResolvePlugin = require('./BeforeResolvePlugin')
+// const BeforeResolvePlugin = require('./BeforeResolvePlugin')
 const DefinePlugin = require('webpack/lib/DefinePlugin')
 const fs = require('fs')
 const InjectDependency = require('../dependencies/InjectDependency')
+const ReplaceDependency = require('../dependencies/ReplaceDependency')
 const ConstDependency = require('webpack/lib/dependencies/ConstDependency')
 
 class TestWebpackPlugin {
   constructor () {}
 
   apply (compiler) {
-    const beforeResolvePlugin = new BeforeResolvePlugin('before-resolve', 'resolve', 'web')
+    // const beforeResolvePlugin = new BeforeResolvePlugin('before-resolve', 'resolve', 'wx')
 
-    if (Array.isArray(compiler.options.resolve.plugins)) {
-      compiler.options.resolve.plugins.push(beforeResolvePlugin)
-    } else {
-      compiler.options.resolve.plugins = [beforeResolvePlugin]
-    }
+    // if (Array.isArray(compiler.options.resolve.plugins)) {
+    //   compiler.options.resolve.plugins.push(beforeResolvePlugin)
+    // } else {
+    //   compiler.options.resolve.plugins = [beforeResolvePlugin]
+    // }
 
     new DefinePlugin({
       'process.env.customEnv': JSON.stringify('this is customEnv'),
@@ -114,6 +115,7 @@ class TestWebpackPlugin {
       // compilation.warnings.push('warning0', 'warning1')
 
       compilation.dependencyTemplates.set(InjectDependency, new InjectDependency.Template())
+      compilation.dependencyTemplates.set(ReplaceDependency, new ReplaceDependency.Template())
 
       if (!compilation.__author__) {
         author = compilation.__author__ = {
@@ -172,6 +174,19 @@ class TestWebpackPlugin {
               : JSON.stringify(str),
             index: expression.end - 1
           })
+          parser.state.current.addDependency(dep)
+        })
+
+        parser.hooks.expression.for('wx').tap('TestWebpackPlugin', expression => {
+          // console.log(expression)
+          
+          let _expression
+          if (expression.type === 'Identifier') {
+            _expression = expression
+          } else if (expression.type === 'MemberExpression') {
+            _expression = expression.object
+          }
+          const dep = new ReplaceDependency('hello', _expression.range)
           parser.state.current.addDependency(dep)
         })
       })
@@ -241,27 +256,28 @@ class TestWebpackPlugin {
       })
 
       compilation.hooks.optimizeModules.tap('TestWebpackPlugin', modules => {
-        // console.log('modules: ', modules[0].resource)
+        // console.log('modules: ', modules[0])
       })
 
-      compilation.hooks.afterChunks.tap('TestWebpackPlugin', chunks => {
-        // console.log('chunks: ', chunks[0].entryModule._source._value)
-        chunks.forEach(chunk => {
-          chunk._modules.forEach(module => {
-            return
-            console.log('module: ', module)
-            if (!chunk.hasRuntime()) {
-              chunk.removeModule(module)
-            }
-          })
-        })
-      })
+      // compilation.hooks.afterCh1unks.tap('TestWebpackPlugin', chunks => {
+      //   // console.log('chunks: ', chunks[0].entryModule._source._value)
+      //   chunks.forEach(chunk => {
+      //     chunk._modules.forEach(module => {
+      //       return
+      //       // console.log('module: ', module)
+      //       if (!chunk.hasRuntime()) {
+      //         console.log(123)
+      //         chunk.removeModule(module)
+      //       }
+      //     })
+      //   })
+      // })
 
       compilation.hooks.optimizeChunkAssets.tapAsync('TestWebpackPlugin', (chunks, callback) => {
         chunks.forEach(chunk => {
           chunk.files.forEach(file => {
             compilation.assets[file] = new ConcatSource(
-              '\/** created by zhaoyiming at 2020/06/27 **\/',
+              '\/** created by zhaoyiming at 2020/12/01 **\/',
               '\n',
               compilation.assets[file]
             )

@@ -22,8 +22,7 @@ const compiler = webpack(merge({}, baseWebpackConfig))
 
 compiler.run(function (err, stats) {
   if (!err) {
-    
   } else {
-    console.log('err: ', err)
+    // console.log('err: ', err)
   }
 })

@@ -7,6 +7,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CleanWebpackPlugin = require('clean-webpack-plugin').CleanWebpackPlugin
 // const VueLoaderPlugin = require('vue-loader').VueLoaderPlugin
 const AutoExternalPlugin = require('./plugins/AutoExternalPlugin')
+const webpack = require('webpack')
+const data = require('./data')
+const BeforeResolvePlugin = require('./plugins/BeforeResolvePlugin')
 
 module.exports = {
   target: 'web', // 默认
@@ -22,8 +25,11 @@ module.exports = {
   resolveLoader: {
     modules: ['node_modules', path.resolve(__dirname, 'loaders')]
   },
-  externals: {
-    'jQuery': '$'
+  // externals: {
+  //   'jQuery': '$'
+  // },
+  resolve: {
+    plugins: [new BeforeResolvePlugin('before-resolve', 'resolve', 'wx')],
   },
   recordsPath: path.join(__dirname, "records.json"),
   plugins: [
@@ -36,16 +42,19 @@ module.exports = {
     }),
     new CleanWebpackPlugin(),
     // new VueLoaderPlugin(),
-    // new AutoExternalPlugin({
-    //   jquery: {
-    //     expose: '$',
-    //     url: 'https://cdn.bootcss.com/jquery/3.1.0/jquery.js'
-    //   },
-    //   vue: {
-    //     expose: 'Vue',
-    //     url: 'https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.js'
-    //   }
-    // })
+    new AutoExternalPlugin({
+      jQuery: {
+        expose: '$',
+        url: 'https://cdn.bootcss.com/jquery/3.1.0/jquery.js'
+      },
+      vue: {
+        expose: 'Vue',
+        url: 'https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.js'
+      }
+    }),
+    // new webpack.ProgressPlugin((value, ...messages) => {
+		// 	data.push(messages.join("|"))
+		// }),
   ],
   module: {
     rules: [
