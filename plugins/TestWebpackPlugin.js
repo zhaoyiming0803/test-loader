@@ -3,7 +3,6 @@ const { parse } = require("commander")
 const ConcatSource = require('webpack-sources').ConcatSource
 // const BeforeResolvePlugin = require('./BeforeResolvePlugin')
 const DefinePlugin = require('webpack/lib/DefinePlugin')
-const fs = require('fs')
 const InjectDependency = require('../dependencies/InjectDependency')
 const ReplaceDependency = require('../dependencies/ReplaceDependency')
 const ConstDependency = require('webpack/lib/dependencies/ConstDependency')
@@ -21,7 +20,7 @@ class TestWebpackPlugin {
     // }
 
     new DefinePlugin({
-      'process.env.customEnv': JSON.stringify('this is customEnv'),
+      'process.env.customEnv': JSON.stringify('this is customEnv!!!'),
       'a1b2c3': JSON.stringify('c3b2a1')
     }).apply(compiler)
 
@@ -133,9 +132,9 @@ class TestWebpackPlugin {
           return 2 === 1
         })
 
-        parser.hooks.rename.for('d').tap('TestWebpackPlugin', expression => {
-          // console.log('--- rename ---')
-          return 2 === 1
+        parser.hooks.rename.for('e').tap('TestWebpackPlugin', expression => {
+          console.log('--- rename ---')
+          return 2 === 2
         })
 
         parser.hooks.assigned.for('h').tap('TestWebpackPlugin', expression => {
@@ -187,6 +186,18 @@ class TestWebpackPlugin {
             _expression = expression.object
           }
           const dep = new ReplaceDependency('hello', _expression.range)
+          parser.state.current.addDependency(dep)
+        })
+
+        parser.hooks.expression.for('aabb').tap('TestWebpackPlugin', expression => {
+          const dep = new ReplaceDependency('world', expression.range)
+          parser.state.current.addDependency(dep)
+        })
+
+        // mock DefinePlugin
+        parser.hooks.expression.for('abcd.efgh').tap('TestWebpackPlugin', expression => {
+          const dep = new ConstDependency('"hello world"', expression.range, false)
+          // dep.loc = expression.loc
           parser.state.current.addDependency(dep)
         })
       })

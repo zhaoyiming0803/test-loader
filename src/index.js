@@ -5,8 +5,12 @@
 import $ from 'jQuery'
 
 import myObj from './use'
-const d = require('/Users/didi/Desktop/github/test-loader/src/d')
-console.log('d: ', d)
+// const d = require('/Users/didi/Desktop/github/test-loader/src/d')
+// console.log('d: ', d)
+
+import e from './e'
+
+var abc = $
 
 const Vue = require('vue')
 console.log('Vue: ', Vue)
@@ -17,16 +21,16 @@ const $$ = require('jQuery')
 //   console.log('b: ', res)
 // })
 
-// import banner from './a.banner'
-// console.log(banner)
+import banner from './a.banner'
+console.log(banner)
 
 // const banner = require('./a.banner')
 // console.log(banner)
 
 const toast = myObj.showToast('12345')
 
-// console.log('process.env.customEnv: ', process.env.customEnv)
-// console.log('a1b2c3: ', a1b2c3)
+console.log('process.env.customEnv: ', process.env.customEnv)
+console.log('a1b2c3: ', a1b2c3)
 
 const hello = {
   showToast () {
@@ -35,6 +39,8 @@ const hello = {
 }
 
 wx.showToast()
+
+aabb.haha()
 
 
 console.log('body element: ', $('body'))
@@ -46,3 +52,7 @@ import c from './deps/c'
 
 console.log('a: ', a)
 console.log('c: ', c)
+
+var f = e
+
+console.log('abcd.efgh: ', abcd.efgh)

@@ -12,7 +12,7 @@ class ReplaceDependency extends NullDependency {
   }
 
   updateHash (hash) {
-    super.updateHash(hash)
+    // super.updateHash(hash)
     hash.update(this.replacement)
   }
 }
